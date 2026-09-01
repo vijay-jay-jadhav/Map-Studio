@@ -116,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ settings, onChangeSettings }) 
                     id="credits-input"
                     type="text"
                     disabled
-                    value={settings.creditsText}
+                    value={settings.creditsText || 'DataVizPulse / Vijay'}
                     placeholder="e.g. DataVizPulse / Vijay"
                     className="w-full px-3 py-1.5 border border-[#d6d1c7] rounded-md text-xs bg-neutral-100/80 text-neutral-500 cursor-not-allowed select-none outline-none transition"
                   />
