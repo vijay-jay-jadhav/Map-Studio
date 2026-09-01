@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StateDataRow, MapSettings } from './types';
 import { FULL_INDIA_DATA } from './constants/mapConfig';
 import { Header } from './components/Header';
@@ -6,8 +6,28 @@ import { Footer } from './components/Footer';
 import { Sidebar } from './components/Sidebar';
 import { DataInput } from './components/DataInput';
 import { MapRenderer } from './components/MapRenderer';
+import { LoginScreen } from './components/LoginScreen';
 
 export const App: React.FC = () => {
+  // Authentication State
+  const [currentUser, setCurrentUser] = useState<string | null>(() => {
+    try {
+      const storedLocal = localStorage.getItem('mapstudio_auth');
+      if (storedLocal) {
+        const parsed = JSON.parse(storedLocal);
+        if (parsed?.user) return parsed.user;
+      }
+      const storedSession = sessionStorage.getItem('mapstudio_auth');
+      if (storedSession) {
+        const parsed = JSON.parse(storedSession);
+        if (parsed?.user) return parsed.user;
+      }
+    } catch {
+      // Ignore parsing errors
+    }
+    return null;
+  });
+
   const [data, setData] = useState<StateDataRow[]>(FULL_INDIA_DATA);
   const [settings, setSettings] = useState<MapSettings>({
     titleText: 'State-wise Data Distribution',
@@ -36,6 +56,12 @@ export const App: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const handleSignOut = () => {
+    localStorage.removeItem('mapstudio_auth');
+    sessionStorage.removeItem('mapstudio_auth');
+    setCurrentUser(null);
+  };
+
   const handleGenerate = () => {
     setIsGenerating(true);
     setTimeout(() => {
@@ -47,9 +73,14 @@ export const App: React.FC = () => {
     }, 250);
   };
 
+  // If user is not authenticated, show login screen gate
+  if (!currentUser) {
+    return <LoginScreen onLoginSuccess={(username) => setCurrentUser(username)} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f6f3]">
-      <Header />
+      <Header currentUser={currentUser} onSignOut={handleSignOut} />
 
       {/* Toast Alert */}
       {toastMessage && (
@@ -96,3 +127,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+
