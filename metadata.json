@@ -1,0 +1,6 @@
+{
+  "name": "Map Studio by Vijay Jadhav",
+  "description": "Generate high-quality, publication-ready choropleth maps of India from CSV, Excel, or Google Sheets data with custom editorial styling, palettes, and annotations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
